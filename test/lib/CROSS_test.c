@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#define NUM_TEST_ITERATIONS 1000
+#include "csprng_hash.h"
+#include "fp_arith.h"
+#include "arith_unit_tests.h"
+#include "CROSS.h"
+#include "api.h"
+#include "parameters.h"
+#include "rng.h"
+
+void info(void){
+    fprintf(stderr,"CROSS functional testing utility\n");
+#if defined(RSDP)
+    fprintf(stderr,"RSDP Variant\n");
+#elif defined(RSDPG)
+    fprintf(stderr,"RSDPG Variant\n");
+#endif
+    fprintf(stderr,"Code parameters: n= %d, k= %d, p=%d\n", N,K,P);
+    fprintf(stderr,"restriction size: z=%d\n",Z);
+    fprintf(stderr,"Fixed weight challenge vector: %d rounds, weight %d \n",T,W);
+    fprintf(stderr,"Private key: %luB\n", sizeof(sk_t));
+    fprintf(stderr,"Public key %luB\n", sizeof(pk_t));
+    fprintf(stderr,"Signature: %luB\n", sizeof(CROSS_sig_t));
+}
+
+/* returns 1 if the test is successful, 0 otherwise */
+int CROSS_sign_verify_test(){
+    pk_t pk;
+    sk_t sk;
+    CROSS_sig_t signature;
+    char message[8] = "Signme!";
+    CROSS_keygen(&sk,&pk);
+    CROSS_sign(&sk,message,8,&signature);
+    int is_signature_ok;
+    is_signature_ok = CROSS_verify(&pk,message,8,&signature);
+    return is_signature_ok;
+}
+
+
+#define NIST_API_TEST_MESSAGE_LEN 3300
+int CROSS_NIST_API_test(){
+    unsigned char pk[CRYPTO_PUBLICKEYBYTES] = {0};
+    unsigned char sk[CRYPTO_SECRETKEYBYTES] = {0};  
+
+    unsigned long long mlen = NIST_API_TEST_MESSAGE_LEN;
+    unsigned char message[NIST_API_TEST_MESSAGE_LEN];
+    /* soft randomized message */
+    srand(time(NULL));
+    for (int i=0;i< NIST_API_TEST_MESSAGE_LEN; i++) message[i] = rand();
+
+    unsigned long long smlen = NIST_API_TEST_MESSAGE_LEN+CRYPTO_BYTES;
+    unsigned char signed_message[NIST_API_TEST_MESSAGE_LEN+CRYPTO_BYTES];
+
+    memset(signed_message,0,smlen);
+    
+    int are_there_problems = 0;
+    are_there_problems |= crypto_sign_keypair(pk,sk);
+    are_there_problems |= crypto_sign(signed_message,&smlen,
+                                      message,mlen,
+                                      sk);
+    are_there_problems |= crypto_sign_open(message,
+                                           &mlen,
+                                           signed_message,
+                                           smlen,
+                                           pk);      
+    return !are_there_problems;
+}
+
+
+int main(int argc, char* argv[]){
+    csprng_initialize(&platform_csprng_state,
+                      (const unsigned char *)"012345678912345",
+                      16,
+                      0);
+    fprintf(stderr,"CROSS implementation functional testbench\n");
+    info();
+    int tests_ok = 0;
+    for (int i = 0; i < NUM_TEST_ITERATIONS; i++) {
+        int iteration_ok = 1;
+        iteration_ok = iteration_ok && fp_arith_testing();
+        fprintf(stderr,"Arith %d\n",iteration_ok);
+        iteration_ok = iteration_ok && restr_belonging_test();
+        fprintf(stderr,"Restr %d\n",iteration_ok);
+        iteration_ok = iteration_ok && signature_invariant_test();
+        fprintf(stderr,"Sig_invariant %d\n",iteration_ok);
+        iteration_ok = iteration_ok && CROSS_sign_verify_test();
+        fprintf(stderr,"Full %d\n",iteration_ok);
+        iteration_ok = iteration_ok && CROSS_NIST_API_test();
+        fprintf(stderr,"NIST API %d\n",iteration_ok);
+        tests_ok += iteration_ok;
+    }
+    fprintf(stderr,"\n%d tests functional out of %d\n",tests_ok,NUM_TEST_ITERATIONS);
+    return 0;
+}
