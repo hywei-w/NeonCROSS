@@ -21,7 +21,7 @@ The reference implementation used is based on [CROSS version 2.2](https://github
 ## Test and Benchmarking
 
 ```bash
-mkdir build && cd build
+mkdir -p build && cd build
 cmake ../ -DREFERENCE=3    # build with Neon optimization
 # cmake ../ -DREFERENCE=1  # alternatively, build reference implementation
 make
@@ -32,7 +32,7 @@ sudo ./bin/CROSS_benchmark_*
 ## KAT Generation and Verification
 ```bash
 cd KAT_Generation
-mkdir build && cd build
+mkdir -p build && cd build
 cmake ../ -DREFERENCE=3    # build with Neon optimization
 # cmake ../ -DREFERENCE=1  # alternatively, build reference implementation
 make
