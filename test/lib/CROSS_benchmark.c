@@ -3,9 +3,9 @@
 #include <string.h>
 #include <time.h>
 #if __APPLE__
-#define __MEDIAN__
+#define __AVERAGE__
 #else
-#define __MEDIAN__
+#define __AVERAGE__
 #endif
 #include "cycles.h"
 
@@ -18,7 +18,7 @@
 #include "rng.h"
 #include <libgen.h>
 
-#define NTESTS 10000
+#define NTESTS 1000
 
 uint64_t time0, time1;
 uint64_t cycles[NTESTS];
