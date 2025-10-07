@@ -43,5 +43,16 @@ cd ../KAT
 sha512sum -c sha_512_sum_KATs
 ```
 
+## License
+
+This project (NeonCROSS) is released under Apache-2.0 license. See [LICENSE](LICENSE) for more information.
+
+Some files contain the modified code from [CROSS official repository](https://github.com/CROSS-signature/CROSS-implementation). These codes are released under CC0-1.0 license.
+
+The file feat.S originates from [neon-ntt](https://github.com/neon-ntt/neon-ntt) and is released under MIT license.
+
+The Keccak optimization files contain modified code from [XKCP](https://github.com/XKCP/XKCP), following its original license terms.
+
+The benchmarking files m1cycles.{c,h} are from [Cortex-A implementation](https://github.com/cothan/SABER/blob/master/Cortex-A_Implementation_KEM/m1cycles.c), which are released under Public Domain or Apache-2.0 license.
 
 
