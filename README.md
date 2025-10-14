@@ -1,6 +1,6 @@
 # NeonCROSS 
 
-This source code is the artifact of the paper *NeonCROSS: Vectorized Implementation of Post-Quantum Signature CROSS on Cortex-A72 and Apple M3*.  
+This source code is the artifact of the paper *"NeonCROSS: Vectorized Implementation of Post-Quantum Signature CROSS on Cortex-A72 and Apple M3"* (IACR TCHES 2026).  
 
 The reference implementation used is based on [CROSS version 2.2](https://github.com/CROSS-signature/CROSS-implementation).
 
