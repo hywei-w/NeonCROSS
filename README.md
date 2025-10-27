@@ -4,6 +4,16 @@ This source code is the artifact of the paper *"NeonCROSS: Vectorized Implementa
 
 The reference implementation used is based on [CROSS version 2.2](https://github.com/CROSS-signature/CROSS-implementation).
 
+## Overview
+
+There are five subfolders included in this repository:
+
++ ref: A reference implementation of the signature CROSS. The required NIST API is present in ref/include/api.h.
++ neon: Neon-optimized implementation for key operations in CROSS.
++ test: Provides CMake-based build facilities to generate executable files that either perform a benchmark of the CROSS implementation or run unit tests. The main CMakeLists.txt file is located in the top-level directory.
++ KAT_Generation: Provides Cmake-based building facilities to generate the Known Answer Test files in the KAT folder. 
++ KAT: The directory contains a set of requests/responses to the Known Answer Tests, obtainable with the code present in KAT_Generation. The  digests of all the files are provided in the sha_512_sum_KATs file, and can be verified as: sha512sum -c sha_512_sum_KATs
+  
 ## System Requirements
 
 **Apple M3**  
@@ -28,6 +38,14 @@ make
 ./bin/CROSS_test_*
 sudo ./bin/CROSS_benchmark_*
 ```
+Note:
+
+Each binary is named based on the combination of category, underlying problem, and algorithm variant. For example:
+
++ CROSS_test_cat_1_RSDPG_SIG_SIZE: unit test for category 1, RSDPG, small variant.
++ CROSS_benchmark_cat_3_RSDP_BALANCED: benchmark for category 3, RSDP, balanced variant.
+
+Choose the binary corresponding to the parameters you want to test or benchmark.
 
 ## KAT Generation and Verification
 ```bash
